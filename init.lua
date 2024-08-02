@@ -1,6 +1,4 @@
--- remap
-vim.cmd("inoremap kj <Esc>")
-vim.cmd("nnoremap ; :")
+require("mururoahh")
 
 -- indentation
 vim.cmd("set smartindent")
@@ -9,6 +7,7 @@ vim.cmd("set expandtab")
 vim.cmd("set tabstop=4")
 vim.cmd("set shiftwidth=4")
 vim.cmd("set softtabstop=4")
+vim.cmd("set nu")
 
 -- lazy.nvim setup
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
@@ -30,34 +29,40 @@ vim.opt.rtp:prepend(lazypath)
 -- Make sure to setup `mapleader` and `maplocalleader` before
 -- loading lazy.nvim so that mappings are correct.
 -- This is also a good place to setup other settings (vim.opt)
-vim.g.mapleader = " "
-vim.g.maplocalleader = "\\"
 
 -- Setup lazy.nvim
 require("lazy").setup({
   spec = {
     -- add your plugins here
     {
-        "catppuccin/nvim",
-        name = "catppuccin",
-        priority = 1000,
+        'rebelot/kanagawa.nvim'
     },
     {
         'nvim-telescope/telescope.nvim',
         tag = '0.1.8',
         dependencies = { 'nvim-lua/plenary.nvim' },
-    }
+    },
+    {
+        "nvim-treesitter/nvim-treesitter",
+        build = ":TSUpdate"
+    },
   },
   -- Configure any other settings here. See the documentation for more details.
-  -- colorscheme that will be used when installing plugins.
-  install = { colorscheme = { "habamax" } },
   -- automatically check for plugin updates
   checker = { enabled = true },
 })
 
-local builtin = require("telescope.builtin")
-vim.keymap.set('n', '<C-p>', builtin.find_files, {})
-vim.keymap.set('n', '<C-k>', builtin.live_grep, {})
+vim.cmd.colorscheme("kanagawa")
 
-require("catppuccin").setup()
+local builtin = require("telescope.builtin")
+vim.keymap.set('n', '<leader>ff', builtin.find_files, {})
+vim.keymap.set('n', '<leader>fg', builtin.live_grep, {})
+
+local config = require("nvim-treesitter.configs")
+config.setup({
+    ensure_installed = {"c", "lua", "vim", "vimdoc", "javascript", "html", "rust"},
+    sync_install = false,
+    highlight = { enable = true },
+    indent = { enable = true },
+})
 
